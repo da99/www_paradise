@@ -4,11 +4,12 @@ require 'htmlentities'
 require 'uri'
 
 HTML = HTMLEntities.new
+MEDIA_TITLES = "../cache_setup/progs/media-titles.txt"
 media_setup=File.expand_path(Dir.pwd + "/../media_setup/bin/media_setup")
 
 get '/' do
   final = ""
-  txt = File.read "../cache_setup/progs/media-titles.txt"
+  txt = File.read MEDIA_TITLES
   txt.split("\n").each do |line|
     pieces = line.split('|')
     name = HTML.encode pieces[0]
@@ -17,6 +18,7 @@ get '/' do
     final += "<a href=\"/media/?url=#{URI.encode url, /\W/}\">#{name}</a>: #{title}<br>"
   end
 
+  final += "<br><br>#{File.mtime MEDIA_TITLES}"
   final
 end
 
