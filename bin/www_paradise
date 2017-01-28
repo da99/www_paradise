@@ -31,7 +31,7 @@ case $action in
       cd "$THIS_DIR"
     fi
 
-    if [[ -e "$THIS_DIR/progs/bin" ]]; then
+    if [[ -e "$THIS_DIR/progs/bin/$action" ]]; then
       "$THIS_DIR/progs/bin/$action" "$@"
       return $?
     fi

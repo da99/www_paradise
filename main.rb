@@ -14,8 +14,10 @@ set :public_folder, File.dirname(__FILE__) + "/Public"
 disable :show_exceptions
 
 get '/' do
-  sites = Dir.glob("#{MEDIA_TITLES}/*.txt").inject([]) do | entrys, file |
+  last_file = nil
+  sites = Dir.glob("#{MEDIA_TITLES}/*.txt").sort.inject([]) do | entrys, file |
 
+    last_file = file
     entrys.push(
       File.read(file).split("\n").inject({'filename': file}) do |entry, line|
         line.scan(/^(\w+):\ +([^\n]+)/).each do |(key, raw)|
@@ -37,11 +39,10 @@ get '/' do
     entrys
   end # === Dir.glob
 
-  puts sites.inspect
   Mustache.render(
     HOMEPAGE,
     sites: sites,
-    sites_mtime: File.mtime(MEDIA_TITLES),
+    sites_mtime: File.mtime(last_file || MEDIA_TITLES),
     now: Time.now.utc.to_i
   )
 end
