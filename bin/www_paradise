@@ -27,6 +27,10 @@ case $action in
 
   *)
 
+    if [[ "$action" == "puma" ]]; then
+      cd "$THIS_DIR"
+    fi
+
     if [[ -e "$THIS_DIR/progs/bin" ]]; then
       "$THIS_DIR/progs/bin/$action" "$@"
       return $?

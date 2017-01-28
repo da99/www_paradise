@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>My Media Homepage</title>
+  <meta name="description" content="My Media Homepage">
+  <link rel="stylesheet" href="/reset.css?{{now}}">
+  <link rel="stylesheet" href="/homepage/styles.css?{{now}}">
+
+</head>
+
+<body>
+  <table>
+    <thead>
+      <tr><td colspan="2">{{sites_mtime}}</td></tr>
+    </thead>
+    <tbody>
+      {{#sites}}
+      <tr>
+        <td><a href="{{href}}">{{name}}</a></td>
+        <td>{{title}}</td>
+      </tr>
+      {{/sites}}
+    </tbody>
+  </table>
+  <!-- <script src="js/scripts.js"></script> -->
+</body>
+</html>

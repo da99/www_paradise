@@ -2,24 +2,48 @@
 require 'sinatra'
 require 'htmlentities'
 require 'uri'
+require 'mustache'
 
-HTML = HTMLEntities.new
-MEDIA_TITLES = "../cache_setup/progs/media-titles.txt"
-media_setup=File.expand_path(Dir.pwd + "/../media_setup/bin/media_setup")
+HTML         = HTMLEntities.new
+MEDIA_TITLES = "../media_setup/progs/urls"
+HOMEPAGE     = File.read("./Public/homepage/markup.mustache")
+media_setup  = File.expand_path(Dir.pwd + "/../media_setup/bin/media_setup")
+
+enable :static
+set :public_folder, File.dirname(__FILE__) + "/Public"
+disable :show_exceptions
 
 get '/' do
-  final = ""
-  txt = File.read MEDIA_TITLES
-  txt.split("\n").each do |line|
-    pieces = line.split('|')
-    name = HTML.encode pieces[0]
-    url = HTML.encode pieces[1]
-    title = HTML.encode pieces[2]
-    final += "<a href=\"/media/?url=#{URI.encode url, /\W/}\">#{name}</a>: #{title}<br>"
-  end
+  sites = Dir.glob("#{MEDIA_TITLES}/*.txt").inject([]) do | entrys, file |
 
-  final += "<br><br>#{File.mtime MEDIA_TITLES}"
-  final
+    entrys.push(
+      File.read(file).split("\n").inject({'filename': file}) do |entry, line|
+        line.scan(/^(\w+):\ +([^\n]+)/).each do |(key, raw)|
+          if !['info', 'url'].include?(key)
+            entry[key] = HTML.encode(raw)
+          else
+            entry[key] = URI.encode(HTML.encode(raw), /\W/)
+            if key == 'url'
+              entry['href'] = '/media/?url=' + entry[key]
+            end
+          end
+
+          entry
+        end # === each (key, raw)
+        entry
+      end # === inject entry
+    ) # === File.read
+
+    entrys
+  end # === Dir.glob
+
+  puts sites.inspect
+  Mustache.render(
+    HOMEPAGE,
+    sites: sites,
+    sites_mtime: File.mtime(MEDIA_TITLES),
+    now: Time.now.utc.to_i
+  )
 end
 
 get '/media/' do
