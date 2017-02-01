@@ -18,7 +18,8 @@ set -u -e -o pipefail
 
 case $action in
   help|--help|-h)
-    /apps/mksh_setup/bin/mksh_setup print-help $0 "$@"
+    PATH="$PATH:$THIS_DIR/../mksh_setup/bin"
+    mksh_setup print-help $0 "$@"
     ;;
 
   gem)
