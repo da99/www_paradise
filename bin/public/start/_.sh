@@ -5,5 +5,6 @@ start () {
     echo "!!! Already running." >&2
     exit 1
   fi
-  RACK_ENV=production $0 puma
+  mkdir -p "$THIS_DIR"/progs
+  sudo hiawatha -d -c "$THIS_DIR"/configs "$@"
 } # === end function

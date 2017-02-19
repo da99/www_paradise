@@ -22,8 +22,8 @@ case $action in
     mksh_setup print-help $0 "$@"
     ;;
 
-  gem)
-    gem "$@"
+  ruby|gem)
+    "$action" "$@"
     ;;
 
   *)
