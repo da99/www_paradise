@@ -1,2 +1,4 @@
 /progs
 /Public/compiled
+/sv/supervise
+/Public/*/compiled

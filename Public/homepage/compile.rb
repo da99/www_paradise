@@ -3,11 +3,6 @@ require 'htmlentities'
 require 'uri'
 require 'mustache'
 
-# get '/media/' do
-#   content_type 'application/m3u'
-#   "#EXTM3U\n#{params['url']}"
-# end
-#
 HTML         = HTMLEntities.new
 MEDIA_TITLES = "#{ENV['APP_DIR']}/../media_setup/progs/urls"
 HOMEPAGE     = File.read("./markup.mustache")
@@ -20,12 +15,12 @@ sites = Dir.glob("#{MEDIA_TITLES}/*.txt").sort.inject([]) do | entrys, file |
   entrys.push(
     File.read(file).split("\n").inject({'filename': file}) do |entry, line|
       line.scan(/^(\w+):\ +([^\n]+)/).each do |(key, raw)|
-        if !['info', 'url'].include?(key)
-          entry[key] = HTML.encode(raw)
-        else
+        if ['info', 'url'].include?(key)
           entry[key] = URI.encode(HTML.encode(raw), /\W/)
-          if key == 'url'
-            entry['href'] = '/media/?url=' + entry[key]
+        else
+          entry[key] = HTML.encode(raw)
+          if key == 'name'
+            entry['href'] = '/media/compiled/' + entry['name'] + '.m3u'
           end
         end
 
